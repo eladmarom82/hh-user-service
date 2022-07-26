@@ -3,12 +3,28 @@ organization := "com.hh"
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file("."))
+  .enablePlugins(PlayScala)
+  .enablePlugins(DockerPlugin)
 
 scalaVersion := "2.13.8"
 
-libraryDependencies += guice
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
+resolvers += Resolver.typesafeRepo("releases")
+
+libraryDependencies ++= Seq(
+  guice,
+  "com.github.pureconfig" %% "pureconfig" % "0.17.1",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
+)
+
+Docker / version := "latest"
+Docker / packageName := "hh-user-service"
+Docker / maintainer := "marom.com"
+Docker / daemonUser := "daemon"
+dockerRepository := Some("https://hub.docker.com/r/eladmarom82/general")
+dockerBaseImage := "java:8-jre-alpine"
+dockerExposedPorts := Seq(9082)
+dockerUpdateLatest := true
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.hh.controllers._"

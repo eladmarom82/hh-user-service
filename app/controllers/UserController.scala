@@ -21,4 +21,12 @@ class UserController @Inject()(val controllerComponents: ControllerComponents) e
   def index() = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.index())
   }
+
+  def setup() = Action { implicit request: Request[AnyContent] =>
+    Ok(views.html.index())
+  }
+
+  def check(id: Int) = Action { implicit request: Request[AnyContent] =>
+    Ok(s"$id")
+  }
 }
