@@ -5,28 +5,12 @@ import play.api._
 import play.api.mvc._
 
 /**
- * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
+ * This controller represents the endpoint to the service to which we interact when determining users app eligibility
  */
 @Singleton
-class UserController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+class UserController extends InjectedController {
 
-  /**
-   * Create an Action to render an HTML page.
-   *
-   * The configuration in the `routes` file means that this method
-   * will be called when the application receives a `GET` request with
-   * a path of `/`.
-   */
-  def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
-  }
-
-  def setup() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
-  }
-
-  def check(id: Int) = Action { implicit request: Request[AnyContent] =>
-    Ok(s"$id")
+  def check(clientId: Int, employeeId: Int) = Action { implicit request: Request[AnyContent] =>
+    Ok(s"clientId: $clientId, employeeId: $employeeId")
   }
 }

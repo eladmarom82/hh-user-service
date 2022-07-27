@@ -12,7 +12,9 @@ scalaVersion := "2.13.8"
 resolvers += Resolver.typesafeRepo("releases")
 
 libraryDependencies ++= Seq(
+  jdbc,
   guice,
+  "mysql" % "mysql-connector-java" % "5.1.47",
   "com.github.pureconfig" %% "pureconfig" % "0.17.1",
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 )
