@@ -1,34 +1,39 @@
 package controllers
 
-import db.DbService
+import play.api.db.Database
 import play.api.mvc.{AnyContent, InjectedController, Request}
 
 import javax.inject.Inject
 
-class InitController @Inject()(dbService: DbService) extends InjectedController {
+class InitController @Inject()(db: Database) extends InjectedController {
 
   def init() = Action { implicit request: Request[AnyContent] =>
-    dbService.runCommand(
-      """CREATE TABLE IF NOT EXISTS User
-        |(
-        |  ClientId             INT,
-        |  EmployeeId           INT,
-        |  FirstName       VARCHAR(50),
-        |  LastName        VARCHAR(50)
-        |);
-        |""".stripMargin
-    )
-
-    dbService.runCommand(
-      """CREATE TABLE IF NOT EXISTS VideoValidation
-        |(
-        |  ClientId             INT,
-        |  SnapshotTimestamp    INT
-        |);
-        |""".stripMargin
-    )
+    createAppTables
 
     Ok(s"initalized")
   }
 
+  private def createAppTables = {
+    db.withConnection(_.createStatement.execute(
+      """CREATE TABLE IF NOT EXISTS AppUser
+        |(
+        |  ClientId             INT NOT NULL,
+        |  EmployeeId           INT NOT NULL,
+        |  FirstName            VARCHAR(50) NOT NULL,
+        |  LastName             VARCHAR(50) NOT NULL,
+        |  BirthDate            DATE NOT NULL,
+        |  LastUpdated          BIGINT NOT NULL,
+        |  PRIMARY KEY (ClientId, EmployeeId)
+        |);
+        |""".stripMargin))
+
+    db.withConnection(_.createStatement.execute(
+      """CREATE TABLE IF NOT EXISTS ClientLastUpdate
+        |(
+        |  ClientId             INT NOT NULL,
+        |  LastUpdated          BIGINT NOT NULL,
+        |  PRIMARY KEY (ClientId)
+        |);
+        |""".stripMargin))
+  }
 }

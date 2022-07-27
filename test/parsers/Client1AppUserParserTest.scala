@@ -5,23 +5,23 @@ import org.scalatest.{FunSpec, MustMatchers}
 import java.sql.Date
 import scala.util.Success
 
-class Client2UserParserTest extends FunSpec with MustMatchers {
+class Client1AppUserParserTest extends FunSpec with MustMatchers {
 
   describe("parse") {
     it("should return success when row is valid") {
-      val validRow = "12,tamar,zilber,10/12/1959"
+      val validRow = "eli,cohen,1959-10-12,123"
 
-      val parser = new Client2UserParser
+      val parser = new Client1AppUserParser
 
       val result = parser.parse(validRow)
 
-      result mustEqual Success(UserRecord("tamar", "zilber", new Date(1959, 12, 10), 2, 12))
+      result mustEqual Success(AppUserRecord("eli", "cohen", new Date(1959, 10, 12), 1, 123))
     }
 
     it("should return failure when row is not in correct format") {
-      val invalidRow = "12tamar,zilber,10/12/1959"
+      val invalidRow = "eli,cohen,195-10-12,123"
 
-      val parser = new Client2UserParser
+      val parser = new Client1AppUserParser
 
       val result = parser.parse(invalidRow)
 

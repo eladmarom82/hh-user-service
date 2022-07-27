@@ -7,4 +7,4 @@ GET     /init                                   controllers.InitController.init(
 
 GET     /pull/:clientId/:yyyyMMdd               controllers.PullerAppController.pull(clientId: Int, yyyyMMdd: Int)
 
-GET     /check                                  controllers.UserController.check(cid: Int, eid: Int)
+GET     /check                                  controllers.AppUserController.check(cid: Int, eid: Int)
