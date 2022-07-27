@@ -14,8 +14,8 @@ import javax.inject._
 class PullerAppController @Inject()(pullerApp: PullerApp) extends InjectedController {
 
   def pull(clientId: Int, yyyyMMdd: Int) = Action { implicit request: Request[AnyContent] =>
-    pullerApp.pull(clientId, yyyyMMdd)
+    val numLines = pullerApp.pull(clientId, yyyyMMdd)
 
-    Ok(s"$clientId")
+    Ok(s"$numLines")
   }
 }
