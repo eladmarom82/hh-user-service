@@ -21,6 +21,8 @@ class PullerApp @Inject()(appUserDal: AppUserDal, clientDal: ClientDal) {
     val startTime = System.currentTimeMillis()
     val stream = Files.lines(Paths.get(inputFileUri))
 
+    appUserDal.clean(yyyyMMdd)
+
     Future.sequence {
       StreamUtil.batch(stream.iterator, batchSize).parallel.map { list =>
         val records = list.flatMap { line =>
@@ -36,6 +38,7 @@ class PullerApp @Inject()(appUserDal: AppUserDal, clientDal: ClientDal) {
       }.toScala(List)
     }.map { _ =>
       clientDal.update(clientId, yyyyMMdd)
+      appUserDal.cleanAllBut(yyyyMMdd)
       Duration.ofMillis(System.currentTimeMillis() - startTime)
     }
   }
