@@ -2,6 +2,7 @@ package controllers
 
 import play.api.mvc._
 import puller.PullerApp
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import javax.inject._
 
@@ -13,9 +14,9 @@ import javax.inject._
 @Singleton
 class PullerAppController @Inject()(pullerApp: PullerApp) extends InjectedController {
 
-  def pull(clientId: Int, yyyyMMdd: Int) = Action { implicit request: Request[AnyContent] =>
-    val numLines = pullerApp.pull(clientId, yyyyMMdd)
-
-    Ok(s"$numLines")
+  def pull(clientId: Int, yyyyMMdd: Int) = Action.async { implicit request: Request[AnyContent] =>
+    pullerApp.pull(clientId, yyyyMMdd).map { duration =>
+      Ok(s"processed, took ${duration.toString.substring(2)}")
+    }
   }
 }

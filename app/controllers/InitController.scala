@@ -14,6 +14,9 @@ class InitController @Inject()(db: Database) extends InjectedController {
   }
 
   private def createAppTables = {
+    db.withConnection(_.createStatement.execute("DROP TABLE IF EXISTS AppUser;"))
+    db.withConnection(_.createStatement.execute("DROP TABLE IF EXISTS ClientLastUpdate;"))
+
     db.withConnection(_.createStatement.execute(
       """CREATE TABLE IF NOT EXISTS AppUser
         |(
@@ -23,7 +26,7 @@ class InitController @Inject()(db: Database) extends InjectedController {
         |  LastName             VARCHAR(50) NOT NULL,
         |  BirthDate            DATE NOT NULL,
         |  LastUpdated          BIGINT NOT NULL,
-        |  PRIMARY KEY (ClientId, EmployeeId)
+        |  PRIMARY KEY (ClientId, EmployeeId, LastUpdated)
         |);
         |""".stripMargin))
 

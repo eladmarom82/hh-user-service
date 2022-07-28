@@ -1,29 +1,43 @@
 package puller
 
 import dal.{AppUserDal, ClientDal}
+import helpers.StreamUtil
 import parsers.AppUserParser
 
 import java.nio.file.{Files, Paths}
+import java.time.Duration
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.jdk.StreamConverters._
 
 class PullerApp @Inject()(appUserDal: AppUserDal, clientDal: ClientDal) {
 
-  def pull(clientId: Int, yyyyMMdd: Int): Long = {
+  val batchSize = 2048
+
+  def pull(clientId: Int, yyyyMMdd: Int): Future[Duration] = {
     val inputFileUri = getClass.getResource(s"/input/client${clientId}_$yyyyMMdd.csv").toURI
-    val stream = Files.lines(Paths.get(inputFileUri)).parallel()
     val parser = AppUserParser.create(1).apply()
+    val startTime = System.currentTimeMillis()
+    val stream = Files.lines(Paths.get(inputFileUri))
 
-    stream.forEach { line =>
-      parser.parse(line).fold(
-        e => {
-          // log.error / increment metric / raise alert ...
-        },
-        record => appUserDal.update(record, yyyyMMdd)
-      )
+    Future.sequence {
+      StreamUtil.batch(stream.iterator, batchSize).parallel.map { list =>
+        val records = list.flatMap { line =>
+          parser.parse(line).fold(
+            e => {
+              // log.error / increment metric / raise alert ...
+              Option.empty
+            }, Some(_)
+          )
+        }
+
+        appUserDal.insertBatchAsync(records, yyyyMMdd)
+      }.toScala(List)
+    }.map { _ =>
+      clientDal.update(clientId, yyyyMMdd)
+      Duration.ofMillis(System.currentTimeMillis() - startTime)
     }
-
-    clientDal.update(clientId, yyyyMMdd)
-    stream.count
   }
 
 }

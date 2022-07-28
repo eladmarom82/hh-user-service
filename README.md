@@ -6,13 +6,15 @@ Prerequisites:
    -e MYSQL_ROOT_PASSWORD= \
    --restart unless-stopped \
    mysql:8`
-2) run `mysql`
-3) run `mysql> CREATE DATABASE IF NOT EXISTS hh`
+2) make sure you use user root with empty password, or change the connection parameters in application.conf
+3) run `mysql`
+4) run `mysql> CREATE DATABASE IF NOT EXISTS hh`
 
-Instructions:
-1) run the application from terminal, run `sbt 'run 9082'` (assuming port 9082 is free)
-2) pull client1 file from 2022-07-27 by a GET request `localhost:9082/pull/1/20220727`
-3) check current user eligibility status by GET `localhost:9082/check`
+Instructions (run from terminal):
+1) run the application: `sbt 'run 9082' -Dplay.server.http.idleTimeout=infinite` (assuming port 9082 is free)
+2) initialize db tables by running `curl http://localhost:9082/init`
+3) pull client1 file from 2022-07-27: `curl http://localhost:9082/pull/1/20220727`
+4) check current user eligibility status by GET `curl http://localhost:9082/check?cid=1&eid=2`
 
 Some explanations are in order :)
 1) files puller is represented by the PullerAppController for convenience although it should probably be a simple scala
