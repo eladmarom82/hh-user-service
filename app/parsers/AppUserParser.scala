@@ -9,3 +9,10 @@ trait AppUserParser {
 
   def parse(row: String): Try[AppUserRecord]
 }
+
+object AppUserParser {
+  val create: Map[Int, () => AppUserParser] = Map(
+    1 -> (() => new Client1AppUserParser),
+    2 -> (() => new Client2AppUserParser)
+  )
+}

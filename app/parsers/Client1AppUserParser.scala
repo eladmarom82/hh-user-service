@@ -6,7 +6,7 @@ import scala.util.{Failure, Try}
 
 class Client1AppUserParser extends AppUserParser {
   override protected val clientId: Int = 1
-  override protected val pattern: Regex = raw"(\S+),(\S+),(\d{4})-(\d{2})-(\d{2}),(\d+)".r
+  override protected val pattern: Regex = raw"(\S+),(\S+),\S+,\S+,(\d{4})/(\d{2})/(\d{2}),(\d+)".r
 
   override def parse(row: String): Try[AppUserRecord] = {
     row match {

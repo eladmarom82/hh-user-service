@@ -1,11 +1,11 @@
-package services
+package dal
 
 import parsers.AppUserRecord
 import play.api.db.Database
 
 import javax.inject.Inject
 
-class AppUserService @Inject()(db: Database) {
+class AppUserDal @Inject()(db: Database) {
 
   def update(record: AppUserRecord, lastUpdate: Long): Boolean = db.withConnection(_.createStatement.execute(
     s"""INSERT INTO AppUser (ClientId, EmployeeId, FirstName, LastName, BirthDate, LastUpdated)
