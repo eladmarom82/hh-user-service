@@ -13,7 +13,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class AppUserController @Inject()(appUserDal: AppUserDal) extends InjectedController {
 
   def check(clientId: Int, employeeId: Int) = Action.async { implicit request: Request[AnyContent] =>
-    appUserDal.isUserEligibleForRegistration(clientId, employeeId).map(result => Ok(s"$result"))
-//    Ok(s"clientId: $clientId, employeeId: $employeeId")
+    appUserDal.isUserEligibleForRegistration(clientId, employeeId)
+      .map(result => Ok(s"$result"))
+      .recover(t => InternalServerError(t.getMessage))
   }
 }

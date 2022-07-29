@@ -15,8 +15,8 @@ import javax.inject._
 class PullerAppController @Inject()(pullerApp: PullerApp) extends InjectedController {
 
   def pull(clientId: Int, yyyyMMdd: Int) = Action.async { implicit request: Request[AnyContent] =>
-    pullerApp.pull(clientId, yyyyMMdd).map { duration =>
-      Ok(s"processed, took ${duration.toString.substring(2)}")
-    }
+    pullerApp.pull(clientId, yyyyMMdd)
+      .map(duration => Ok(s"processed, took ${duration.toString.substring(2)}"))
+      .recover(t => InternalServerError(t.getMessage))
   }
 }

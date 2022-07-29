@@ -20,13 +20,17 @@ class AppUserDal @Inject()(db: Database) {
     } else false
   }
 
-  def clean(currentSnapshot: Long) = db.withConnection(_.createStatement.execute(
-    s"DELETE FROM AppUser WHERE LastUpdated = $currentSnapshot"
-  ))
+  def clean(currentSnapshot: Long) = Future {
+    db.withConnection(_.createStatement.execute(
+      s"DELETE FROM AppUser WHERE LastUpdated = $currentSnapshot"
+    ))
+  }
 
-  def cleanAllBut(currentSnapshot: Long) = db.withConnection(_.createStatement.execute(
-    s"DELETE FROM AppUser WHERE LastUpdated <> $currentSnapshot"
-  ))
+  def cleanAllBut(currentSnapshot: Long) = Future {
+    db.withConnection(_.createStatement.execute(
+      s"DELETE FROM AppUser WHERE LastUpdated <> $currentSnapshot"
+    ))
+  }
 
   def isUserEligibleForRegistration(clientId: Int, employeeId: Int) = Future {
     db.withConnection { connection =>
