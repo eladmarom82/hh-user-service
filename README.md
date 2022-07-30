@@ -3,16 +3,16 @@
 CSV pulling pipeline for user registration eligibility
 
 Prerequisites (MacOs):
-1) install sbt: `brew install sbt`
-2) install curl: `brew install curl`
-3) install mysql: `brew install mysql` or dockerized (requires docker) `docker run --name mysql -d \
+1) install Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+2) install sbt: `brew install sbt`
+4) install mysql: `brew install mysql` or dockerized (requires docker) `docker run --name mysql -d \
    -p 3306:3306 \
    -e MYSQL_ROOT_PASSWORD= \
    --restart unless-stopped \
    mysql:8`
-4) in application.conf, db connection is configured with (username=root, password=""). Change it if needed.
-5) run `mysql`
-6) run `mysql> CREATE DATABASE IF NOT EXISTS hh;`
+5) in application.conf, db connection is configured with (username=root, password=""). Change it if needed.
+6) run `mysql`
+7) run `mysql> CREATE DATABASE IF NOT EXISTS hh;`
 
 Instructions (run from terminal):
 1) under project root dir, run the application: `sbt 'run 9082' -Dplay.server.http.idleTimeout=infinite` (assuming port 9082 is free)
