@@ -6,18 +6,27 @@ Prerequisites:
    -e MYSQL_ROOT_PASSWORD= \
    --restart unless-stopped \
    mysql:8`
-2) make sure you use user root with empty password, or change the connection parameters in application.conf
+2) in application.conf, db connection is configured with (username=root, password=""). Change it if needed.
 3) run `mysql`
-4) run `mysql> CREATE DATABASE IF NOT EXISTS hh`
+4) run `mysql> CREATE DATABASE IF NOT EXISTS hh;`
 
 Instructions (run from terminal):
-1) run the application: `sbt 'run 9082' -Dplay.server.http.idleTimeout=infinite` (assuming port 9082 is free)
-2) initialize db tables by running `curl http://localhost:9082/init`
-3) pull client1 file from 2022-07-27: `curl http://localhost:9082/pull/1/20220727`
-4) check current user eligibility status by GET `curl http://localhost:9082/check?cid=1&eid=2`
+1) under project root dir, run the application: `sbt 'run 9082' -Dplay.server.http.idleTimeout=infinite` (assuming port 9082 is free)
+2) initialize application db tables by running `curl http://localhost:9082/init`
+3) run scenario:
+   1) pull client1 file from 2022-07-26: `curl http://localhost:9082/pull/1/20220727`
+   2) check eligibility status for user identified by (clientId = 1, employeeId = 2): `curl http://localhost:9082/check?cid=1&eid=2`. it should return true.
+   3) pull client1 file from 2022-07-27: `curl http://localhost:9082/pull/1/20220728`
+   4) check (clientId = 1, employeeId = 2) again. it should now return false, as this user is removed in the latest snapshot.
+4) pulling large files:
+   1) pull client1 file from 2022-07-28, it has 1 million rows. `curl http://localhost:9082/pull/1/20220729`
+   * inserting to the db is performed asynchronously in batches in parallel. batch size is configurable in application.conf, currently set on 500.
+5) tests:
+   1) run with `sbt test`
+   * tests currently consists of full flow tests with scenarios for client 2 and unit tests for parsers
 
 Some explanations are in order :)
-1) files puller is represented by the PullerAppController for convenience although it should probably be a simple scala
+1) files puller is represented by the PullerApp for convenience although it should probably be a simple scala
    app (main) that is triggered by a cronjob with concurrency policy = 1 to ensure continuous polling of new files
 2) I use yyyyMMdd pattern working under the assumption that we can identify a file by its creation timestamp 
    or tag it by the cronjob trigger timestamp.

@@ -17,32 +17,34 @@ class FileProcessor @Inject()(appUserDal: AppUserDal, config: ProcessingConfig) 
 
   private val logger = Logger(getClass)
 
-  def process(fileURI: URI, clientId: Int, yyyyMMdd: Int) = {
+  def process(fileURI: URI, clientId: Int, yyyyMMdd: Int): Future[LinesSummary] = {
     logger.info(s"start processing $fileURI using batch size of ${config.batchSize}")
 
     val parser = AppUserParser.create(clientId).apply()
     val sourceStream = Files.lines(Paths.get(fileURI))
     val parallelBatchStream = StreamUtil.batch(sourceStream.iterator, config.batchSize).parallel
 
-    val futures: List[Future[Boolean]] = parallelBatchStream.map { list =>
+    val futures: List[Future[LinesSummary]] = parallelBatchStream.map { list =>
+      var failedLines = 0
       val records = list.flatMap { line =>
         parser.parse(line).fold(
           throwable => {
             logger.error(s"error while parsing the following line: $line", throwable)
+            failedLines += 1
             // increment metric / raise alert ...
             Option.empty
           }, Some(_)
         )
       }
 
-      appUserDal.insertBatchAsync(records, yyyyMMdd)
+      appUserDal.insertBatchAsync(records, yyyyMMdd).map(_ => LinesSummary(records.size, failedLines))
     }.toScala(List)
 
     Future.sequence(futures)
       .map { list =>
         parallelBatchStream.close()
         sourceStream.close()
-        list
+        list.reduce(_ + _)
       }
   }
 }

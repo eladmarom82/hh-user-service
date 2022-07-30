@@ -16,7 +16,9 @@ class PullerAppController @Inject()(pullerApp: PullerApp) extends InjectedContro
 
   def pull(clientId: Int, yyyyMMdd: Int) = Action.async { implicit request: Request[AnyContent] =>
     pullerApp.pull(clientId, yyyyMMdd)
-      .map(duration => Ok(s"processed, took ${duration.toString.substring(2)}"))
+      .map { case (linesSummary, duration) =>
+        Ok(s"$linesSummary. took ${duration.toString.substring(2)}")
+      }
       .recover(t => InternalServerError(t.getMessage))
   }
 }

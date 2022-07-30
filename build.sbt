@@ -15,6 +15,7 @@ libraryDependencies ++= Seq(
   jdbc,
   guice,
   "mysql" % "mysql-connector-java" % "5.1.47",
+  "com.h2database" % "h2" % "2.1.214",
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 )
 
