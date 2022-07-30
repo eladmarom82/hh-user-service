@@ -27,9 +27,3 @@ dockerRepository := Some("https://hub.docker.com/r/eladmarom82/general")
 dockerBaseImage := "java:8-jre-alpine"
 dockerExposedPorts := Seq(9082)
 dockerUpdateLatest := true
-
-// Adds additional packages into Twirl
-//TwirlKeys.templateImports += "com.hh.controllers._"
-
-// Adds additional packages into conf/routes
-// play.sbt.routes.RoutesKeys.routesImport += "com.hh.binders._"
