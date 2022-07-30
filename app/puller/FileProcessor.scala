@@ -13,14 +13,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.jdk.StreamConverters._
 
+/**
+ * in charge of async batch parsing and storing of the file content
+ */
 class FileProcessor @Inject()(appUserDal: AppUserDal, config: ProcessingConfig) {
 
   private val logger = Logger(getClass)
 
-  def process(fileURI: URI, clientId: Int, yyyyMMdd: Int): Future[LinesSummary] = {
+  def process(fileURI: URI, yyyyMMdd: Int, parser: AppUserParser): Future[LinesSummary] = {
     logger.info(s"start processing $fileURI using batch size of ${config.batchSize}")
 
-    val parser = AppUserParser.create(clientId).apply()
     val sourceStream = Files.lines(Paths.get(fileURI))
     val parallelBatchStream = StreamUtil.batch(sourceStream.iterator, config.batchSize).parallel
 

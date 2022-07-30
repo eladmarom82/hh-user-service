@@ -8,6 +8,9 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+/**
+ * wrapper for AppUser db table operations
+ */
 class AppUserDal @Inject()(db: Database) {
 
   def insertBatchAsync(records: ListBuffer[AppUserRecord], lastUpdate: Long) = Future {

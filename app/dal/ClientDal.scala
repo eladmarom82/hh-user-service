@@ -6,6 +6,9 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+/**
+ * wrapper for ClientLastUpdate db table operations
+ */
 class ClientDal @Inject()(db: Database) {
 
   def update(clientId: Int, lastUpdate: Long) = Future {

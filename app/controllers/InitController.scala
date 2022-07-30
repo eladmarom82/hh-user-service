@@ -5,12 +5,16 @@ import play.api.mvc.{AnyContent, InjectedController, Request}
 
 import javax.inject.Inject
 
+/**
+ * this controller is setting up db tables necessary for the app.
+ * not a real part of the app, only for ease of use and testing.
+ */
 class InitController @Inject()(db: Database) extends InjectedController {
 
   def init() = Action { implicit request: Request[AnyContent] =>
     createAppTables
 
-    Ok(s"initalized")
+    Ok("initalized")
   }
 
   private def createAppTables = {

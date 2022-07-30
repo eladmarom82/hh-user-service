@@ -9,10 +9,7 @@ import play.api.test.Helpers.{route, _}
 import play.api.test._
 
 /**
- * Add your spec here.
- * You can mock out a whole application including requests, plugins etc.
- *
- * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
+ * testing the application end to end using h2 in memory db
  */
 class ApplicationFeatureSpec extends PlaySpec with GuiceOneAppPerTest with Injecting with GivenWhenThen {
 
